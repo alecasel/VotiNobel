@@ -1,0 +1,45 @@
+INPUT: 
+	- Insieme di N oggetti Esame (PARTENZA)
+	- Numeri di crediti necessari per partecipare (m)
+	
+OUTPUT:
+	- Insieme di oggetti Esame, sottoinsieme di PARTENZA t.c. 
+		* somma di Esame.crediti() == m
+		* media di Esame.voto() sia MAX	
+
+		
+APPROCCIO 1 (stupido)
+	Ad ogni livello L di ricorsione, aggiungo un esame => problema: devo decidere quale => li provo tutti (anagrammi)
+	
+	- SOLUZIONE PARZIALE = sottoinsieme di L elementi
+	- GENERAZIONE SOLUZIONE PARZIALE
+		Per tutti i casi non ancora considerati, cioè gli oggetti Esame non ancora compresi in PARZIALE:
+		* provo ad aggiungere
+		* mando avanti ricorsione
+		* faccio backtracking
+		
+	Per L = 0 => N scelte possibili
+		PARIALE = {e1}
+			L = 1
+				PARZIALE = {e1, e2}
+				PARZIALE = {e1, e3}
+				[...]
+		PARZIALE = {e2}
+				PARZIALE = {e2, e1}		E' in realtà la stessa soluzione di PARZIALE = {e1, e2} => INUTILE! Stupido!
+				PARZIALE = {e2, e3}
+				[...]
+		[...]
+		PARZIALE = {en}
+			
+			
+	- CASI TERMINALI	
+		A)	L = PARTENZA.size() = N 	=> non ci sono più esami da aggiungere
+		Controllo soluzione parziale:
+			* se PARZIALE.sommaCrediti() == m
+				- se PARZIALE.media() > tutte le medie viste fino ad ora => tengo traccia di parziale
+			* se PARZIALE.sommaCrediti() != m
+				- abbandono la ricorsione => la soluzione non rispetta il vincolo sui crediti
+				
+		B)	PARZIALE.sommaCrediti() >= m	=> mi fermo subito
+			* se > m	=>	scarto parziale e non vado avanti
+			* se = m	=>	controllo soluzione parziale
