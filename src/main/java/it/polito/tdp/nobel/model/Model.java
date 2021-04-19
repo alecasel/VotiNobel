@@ -11,7 +11,6 @@ public class Model {
 	private List<Esame> partenza;
 	private Set<Esame> soluzioneMigliore;
 	private double mediaSoluzioneMigliore;
-	int L = 0;
 	
 	public Model() {
 		EsameDAO dao = new EsameDAO();
@@ -26,13 +25,18 @@ public class Model {
 		soluzioneMigliore = new HashSet<Esame>();
 		mediaSoluzioneMigliore = 0;
 		
-		cerca(parziale, 0, numeroCrediti);
+		cercaFurbo(parziale, 0, numeroCrediti);
 		
 		return soluzioneMigliore;	
 	}
 
-	
-	private void cerca(Set<Esame> parziale, int i, int m) {
+	/**
+	 * COMPLESSITA' = N!
+	 * @param parziale
+	 * @param L
+	 * @param m
+	 */
+	private void cerca(Set<Esame> parziale, int L, int m) {
 		//	casi terminali
 		
 		int crediti = sommaCrediti(parziale);
@@ -51,20 +55,62 @@ public class Model {
 			return ;	//	Ho trovato la soluzione migliore, non vado oltre
 		}
 		
-		//	sicuramente crediti < m
-		//	L = N => non ci sono più esami da aggiungere
+		//	se arrivo qui: sicuramente abbiamo crediti < m
+		//	se L = N => non ci sono più esami da aggiungere
 		if (L == partenza.size()) {
 			return ;	//	non posso aggiungere esami perché non ne ho più
 		}
 		
 		//	Genero i sottoproblemi
 		for (Esame esame : partenza) {
+			//	Non possiamo avere soluzione parziale che contiene due volte lo stesso esame. Non devo aggiungere di nuovo lo stesso,
+			//	quindi salto quel giro del ciclo
 			if (!parziale.contains(esame)) {
 				parziale.add(esame);
 				cerca(parziale, L+1, m);
 				parziale.remove(esame);
 			}
 		}
+	}
+	
+	/**
+	 * Complessità 2^N
+	 * @param parziale
+	 * @param L
+	 * @param m
+	 */
+	private void cercaFurbo(Set<Esame> parziale, int L, int m) {
+		// casi terminali
+
+		int crediti = sommaCrediti(parziale);
+
+		if (crediti > m) {
+			return;
+		}
+
+		if (crediti == m) {
+			double media = calcolaMedia(parziale);
+			if (media > mediaSoluzioneMigliore) {
+				soluzioneMigliore = new HashSet<>(parziale);
+				mediaSoluzioneMigliore = media;
+			}
+
+			return; // Ho trovato la soluzione migliore, non vado oltre
+		}
+		
+		//	se arrivo qui: sicuramente abbiamo crediti < m
+		//	se L = N => non ci sono più esami da aggiungere
+		if (L == partenza.size()) {
+			return ;	//	non posso aggiungere esami perché non ne ho più
+		}
+		
+		//	Generazione sottoproblemi
+		//	partenza[L] è da aggiungere o no? Provo entrambi i casi. Ho due strade, cioè aggiungo o non aggiungo
+		parziale.add(partenza.get(L));	//	Al primo giro della ricorsione, aggiungo l'indice 0 e così via...
+		cercaFurbo(parziale, L+1, m);
+		
+		parziale.remove(partenza.get(L));
+		cercaFurbo(parziale, L+1, m);
 	}
 
 

@@ -8,7 +8,7 @@ OUTPUT:
 		* media di Esame.voto() sia MAX	
 
 		
-APPROCCIO 1 (stupido)
+APPROCCIO 1 (stupido)  |  COMPLESSITA' = N!
 	Ad ogni livello L di ricorsione, aggiungo un esame => problema: devo decidere quale => li provo tutti (anagrammi)
 	
 	- SOLUZIONE PARZIALE = sottoinsieme di L elementi
@@ -43,3 +43,19 @@ APPROCCIO 1 (stupido)
 		B)	PARZIALE.sommaCrediti() >= m	=> mi fermo subito
 			* se > m	=>	scarto parziale e non vado avanti
 			* se = m	=>	controllo soluzione parziale
+			
+			
+APPROCCIO 2 (FURBO): evitiamo ciò che abbiamo chiamato INUTILE  |  COMPLESSITA' = 2^N
+	- LIVELLO DELLA RICORSIONE L: indica quale corso sto decidendo di mettere (o non) nella soluzione
+	
+	Supponiamo di avere PARTENZA = {e1,e2,...,en}
+	L = 0 	=>	considero e1. Ho solo due possibilità (non più N) : metterlo o non metterlo
+		* lo metto	=>	PARZIALE = {e1}
+			L = 1	=>	considero e2
+				* lo metto => PARZIALE = {e1,e2}
+				* non lo metto => PARZIALE = {e1}
+		* non lo metto	=>	PARZIALE {}
+			L = 1	=>	considero e2
+				* lo metto => PARZIALE = {e2}
+				* non lo metto => PARZIALE = {}
+	
